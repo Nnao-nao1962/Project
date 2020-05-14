@@ -1,20 +1,14 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ProjectEX+.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  ImageMng.cpp
-  Stage.cpp
-  InputState.cpp
-  INPUT_ID.cpp
-  KeyState.cpp
-  main.cpp
   Obj.cpp
   BaseScene.cpp
-  FuncCheck.cpp
   GameScene.cpp
-  LAYER.cpp
-  SelectScene.cpp
   SceneMng.cpp
-C:\Users\kikuchi\Desktop\GameProjct\Scene\SceneMng.cpp(5,10): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+C:\Users\kikuchi\Desktop\Projct\Project\GameProjct\Scene\SceneMng.cpp(5,10): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+  SelectScene.cpp
   TitleScene.cpp
-  _DeBugConOut.cpp
+  FuncCheck.cpp
+  Stage.cpp
   _DebugDispOut.cpp
+  main.cpp
   コードを生成中...
-  ProjectEX+.vcxproj -> C:\Users\kikuchi\Desktop\GameProjct\x64\Debug\GameProject.exe
+  ProjectEX+.vcxproj -> C:\Users\kikuchi\Desktop\Projct\Project\GameProjct\x64\Debug\GameProject.exe

@@ -12,7 +12,7 @@
 
 TitleScene::TitleScene()
 {
-	IpSceneMng._stageCnt = 0;
+	IpSceneMng._stageCnt = 1;
 	IpSceneMng._scoreCnt = 0;
 	IpSceneMng._liveCnt = 3;
 
@@ -82,7 +82,7 @@ void TitleScene::MapInit(void)
 	{
 		for (int x = 0; x < 20; x++)
 		{
-			switch (IpSceneMng.mapNow[y][x])
+			switch (IpSceneMng.map[MAP_Y][MAP_X])
 			{
 			case 4: 
 				Floordata = { BLOCK_TYPE::ƒuƒƒbƒN‚P,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };

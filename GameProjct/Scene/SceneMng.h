@@ -52,6 +52,10 @@ using DrawQueT = std::tuple<int, double, double,int, double,int, LAYER>;
 #define _Input SceneMng::GetInstance()._input
 
 
+#define MAP_X 20
+#define MAP_Y 20
+
+
 class SceneMng
 {
 public:
@@ -78,7 +82,7 @@ public:
 	}
 	void Run(void);
 
-	int mapNow[20][20];							
+	int map[MAP_Y][MAP_X];
 
 	bool AddDrawQue(DrawQueT dQue);				
 	bool AddActQue(ActQueT aQue);				
@@ -91,12 +95,12 @@ public:
 
 	int _blendCnt;								
 	int _stageCnt;							
-	int _liveCnt;							
+	int _liveCnt;				// 			
 	int _timeLimitCnt;							
 	int _scoreCnt;							
 	
 	std::shared_ptr<InputState> _input;				
-	bool _liveFlag;									
+	bool _liveFlag;							// true:ê∂Ç´ÇƒÇ¢ÇÈÅAfalse:éÄÇÒÇ≈Ç¢ÇÈ
 	bool _endFlag;									
 	const int frames(void)const;					
 

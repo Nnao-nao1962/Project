@@ -4,6 +4,7 @@
 #include "TitleScene.h"
 #include "Obj.h""
 #include "ImageMng.h"
+#include "SelectScene.h"
 #include <algorithm>
 #include <KeyState.h>
 
@@ -88,6 +89,7 @@ void SceneMng::Run(void)
 	SysInit();
 
 	_activeScene = std::make_unique<TitleScene>();
+	//_activeScene = std::make_unique<SelectScene>();
 	
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
@@ -139,6 +141,7 @@ bool SceneMng::SysInit(void)
 		return false;
 	}
 	
+	// ∑∞èÓïÒ
 	_input = std::make_shared<KeyState>();								
 	
 	_dbgSetup(215);														

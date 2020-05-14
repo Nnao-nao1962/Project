@@ -7,7 +7,7 @@
 
 SelectScene::SelectScene()
 {
-	IpImageMng.GetID("space", "image/space.png", { 300,50 }, { 1,1 });
+	IpImageMng.GetID("spaceblue", "image/spaceê¬.png", { 300,50 }, { 1,1 });
 	
 }
 
@@ -45,13 +45,13 @@ unique_Base SelectScene::Update(unique_Base own)
 	switch (IpSceneMng._stageCnt)
 	{
 	case 1:
-		IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	case 2:
-		IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	case 3:
-		IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	default:
 		break;
