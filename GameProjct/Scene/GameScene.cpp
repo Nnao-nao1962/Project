@@ -13,7 +13,8 @@
 
 GameScene::GameScene()
 {	
-	funcInit();
+	TRACE("πﬁ∞—º∞›ÇÃê∂ê¨");
+	///funcInit();
 	IpSceneMng._timeLimitCnt = 300;
 	IpSceneMng._liveFlag = true;
 	IpSceneMng._endFlag = false;
@@ -70,11 +71,14 @@ unique_Base GameScene::Update(unique_Base own)
 	{
 	case 1:
 		//IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0], 4096 / 2 - _mapPos.x ,800 / 2,0,0,0,LAYER::BG });
-		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0], 40,300,0,0,0,LAYER::BG });
+		TRACE("πﬁ∞—º∞›1îwåiÇÃê∂ê¨");
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0], 400,300,0,0,0,LAYER::BG });
 		break;
 	case 2:
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0], 400 ,300 / 2,0,0,0,LAYER::BG });
 		break;
 	case 3:
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],400,300,0,0,0,LAYER::BG });
 		break;
 	default:
 		AST();
@@ -89,10 +93,10 @@ unique_Base GameScene::Update(unique_Base own)
 
 
 
-	if (IpSceneMng._endFlag)
+	/*if (IpSceneMng._endFlag)
 	{
 		return std::make_unique<GameScene>();	
-	}
+	}*/
 	return std::move(own);
 }
 
@@ -117,7 +121,7 @@ void GameScene::MapInit(void)
 {
 	// ï`âÊÇì«Ç›çûÇﬁ
 	IpImageMng.GetID("ÉuÉçÉbÉN", "image/block.png", { 30,30 }, { 9,2 });	
-	IpImageMng.GetID("îwåi", "image/bakeImage.png", { 800,600 }, { 1, 1 });
+	IpImageMng.GetID("îwåi", "image/bakeImage.jpg", { 800,600 }, { 1, 1 });
 
 	
 	_mapPos = { 0,0 };
@@ -128,26 +132,25 @@ void GameScene::MapInit(void)
 	int y = 0;
 	int x = 0;
 	FILE* fp = NULL;
-	fopen_s(&fp, "csv/1.csv", "rb");
+	fopen_s(&fp, "csv/2.csv", "rb");
 	while (fscanf_s(fp, "%d", &type) != EOF)
 	{
+		//TRACE("œØÃﬂ√ﬁ∞¿ÇÃì«Ç›çûÇ›");
 		IpSceneMng.map[MAP_Y][MAP_X] = type;
-		//x++;
 	}
 	
 		
 	StageState stageState;
 	
-	for (int y = 0; y < 20; y++)
+	for (int y = 0; y < MAP_Y; y++)
 	{
-		for (int x = 0; x < 20; x++)
+		for (int x = 0; x < MAP_X; x++)
 		{
 			switch (IpSceneMng.map[MAP_Y][MAP_X])
 			{
 			case 4:
-				stageState = { BLOCK_TYPE::ÉuÉçÉbÉNÇP,{0,0},{30,30} };
-				fscanf_s(fp, "%d,", &IpSceneMng.map[y][x]);
-
+				//TRACE("Ãﬁ€Ø∏ÇÃì«Ç›çûÇ›");
+				stageState = { BLOCK_TYPE::ÉuÉçÉbÉNÇP,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
 				_objList.emplace_back(new Stage(stageState));
 				break;
 			case 5:
@@ -156,6 +159,11 @@ void GameScene::MapInit(void)
 				break;
 			default:
 				break;
+			}
+			if (IpSceneMng.map[y][x] == 4)
+			{
+				stageState = { BLOCK_TYPE::ÉuÉçÉbÉNÇQ,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
+				_objList.emplace_back(new Stage(stageState));
 			}
 		}
 	}
