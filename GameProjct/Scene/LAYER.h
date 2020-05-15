@@ -5,6 +5,7 @@ enum class LAYER
 	BG,						// ”wŒi
 	CHAR,					// ·¬×¸À°
 	UI,						// UI
+	BUTTON,
 	EX,						// ½º±‚È‚Ç
 	MAX
 };

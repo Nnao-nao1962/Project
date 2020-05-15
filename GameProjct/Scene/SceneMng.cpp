@@ -14,7 +14,7 @@
 Key _key;
 SceneMng *SceneMng::sInstance=nullptr;
 
-SceneMng::SceneMng() :ScreenSize{ 800,600 }, GameScreenSize{ ScreenSize / 2 }	
+SceneMng::SceneMng() :ScreenSize{ 800,600 }, GameScreenSize{ ScreenSize / 2 }, _flameCnt{ 0 }
 {
 }
 
@@ -88,7 +88,7 @@ void SceneMng::Run(void)
 {
 	SysInit();
 
-	_activeScene = std::make_unique<TitleScene>();
+_activeScene = std::make_unique<TitleScene>();
 	//_activeScene = std::make_unique<SelectScene>();
 	
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -105,6 +105,7 @@ void SceneMng::Run(void)
 		Draw();
 
 		_frames++;
+		_flameCnt++;
 	}
 }
 

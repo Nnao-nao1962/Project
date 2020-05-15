@@ -97,7 +97,8 @@ public:
 	int _stageCnt;							
 	int _liveCnt;				// 			
 	int _timeLimitCnt;							
-	int _scoreCnt;							
+	int _scoreCnt;						
+	int _flameCnt;
 	
 	std::shared_ptr<InputState> _input;				
 	bool _liveFlag;							// true:¶‚«‚Ä‚¢‚éAfalse:€‚ñ‚Å‚¢‚é

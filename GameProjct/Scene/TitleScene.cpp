@@ -17,7 +17,7 @@ TitleScene::TitleScene()
 	IpSceneMng._liveCnt = 3;
 
 	MapInit();
-	funcInit();
+	//funcInit();
 
 }
 
@@ -28,8 +28,14 @@ TitleScene::~TitleScene()
 // 更新
 unique_Base TitleScene::Update(unique_Base own)
 {
-	IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
-	//IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],IpSceneMng.ScreenSize.x/2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG});
+	if (IpSceneMng._flameCnt % 50 / 40)
+	{
+		IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 5*4,0,0,200,LAYER::BUTTON});
+	}
+	
+
+	// ID、X、Y、ｻｲｽﾞY、回転、Zｵｰﾀﾞｰ、ﾚｲﾔｰID
+	IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],400,300,0,0,0,LAYER::BG});
 	//IpSceneMng.AddDrawQue({ IMAGE_ID("タイトル")[0],IpSceneMng.ScreenSize.x/2,IpSceneMng.ScreenSize.y / 2-100,0,0,0,LAYER::BG });
 	if (!IpSceneMng._blendCnt)
 	{
@@ -71,6 +77,7 @@ void TitleScene::MapInit(void)
 {
 
 	IpImageMng.GetID("space", "image/space.png", { 300,50 }, { 1,1 });
+	IpImageMng.GetID("背景", "image/backImage.jpg", { 800,600 }, { 1,1 });
 	IpImageMng.GetID("ブロック", "image/block.png", { 30,30 }, { 9,2 });
 	
 	_mapPos = { 0,0 };

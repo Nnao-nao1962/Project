@@ -8,7 +8,7 @@
 SelectScene::SelectScene()
 {
 	IpImageMng.GetID("spaceblue", "image/spaceê¬.png", { 300,50 }, { 1,1 });
-	
+	IpImageMng.GetID("îwåi", "image/backImage.png", { 800,600 }, { 1,1 });
 }
 
 
@@ -45,12 +45,19 @@ unique_Base SelectScene::Update(unique_Base own)
 	switch (IpSceneMng._stageCnt)
 	{
 	case 1:
-		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],400,300,0,0,100,LAYER::BG });
+		if (IpSceneMng._flameCnt % 50 / 40)
+		{
+			IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 5 * 4,0,0,0,LAYER::BUTTON });
+		}
+		
 		break;
 	case 2:
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],0,0,0,0,0,LAYER::BG });
 		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	case 3:
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],0,0,0,0,0,LAYER::BG });
 		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	default:
