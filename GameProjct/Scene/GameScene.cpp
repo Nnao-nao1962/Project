@@ -122,6 +122,7 @@ void GameScene::MapInit(void)
 	// •`‰æ‚ğ“Ç‚İ‚Ş
 	IpImageMng.GetID("ƒuƒƒbƒN", "image/block.png", { 30,30 }, { 9,2 });	
 	IpImageMng.GetID("”wŒi", "image/bakeImage.jpg", { 800,600 }, { 1, 1 });
+	IpImageMng.GetID("”’", "image/white.png", { 800,600 }, { 1, 1 });
 
 	
 	_mapPos = { 0,0 };
