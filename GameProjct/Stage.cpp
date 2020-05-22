@@ -48,19 +48,14 @@ void Stage::Init(void)
 	case BLOCK_TYPE::ブロック３:
 		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(2)], 30);
 		SetAnim(STATE::STAY, data);
-		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(14)], 30);
-		SetAnim(STATE::DETH, data);
 		break;
 	case BLOCK_TYPE::ブロック４:
-		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(3)], 30);
+		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(4)], 30);
 		SetAnim(STATE::STAY, data);
-		break;
+		break;		
 	case BLOCK_TYPE::ブロックSP:
-		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(11)], 30);
+		data.emplace_back(IMAGE_ID("ブロック")[static_cast<int>(5)], 30);
 		SetAnim(STATE::STAY, data);
-		
-		data.emplace_back(-1, 10);
-		SetAnim(STATE::DETH, data);
 		break;
 	default:
 		break;

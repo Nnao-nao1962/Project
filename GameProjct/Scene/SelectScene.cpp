@@ -7,8 +7,9 @@
 
 SelectScene::SelectScene()
 {
-	IpImageMng.GetID("spaceblue", "image/spaceê¬.png", { 300,50 }, { 1,1 });
-	IpImageMng.GetID("îwåi", "image/backImage.png", { 800,600 }, { 1,1 });
+	IpImageMng.GetID("îwåiÇQ", "image/back2.png", { 800,600 }, { 1,1 });
+	IpImageMng.GetID("èâãâ", "image/èâãâ.png", { 300,80 }, { 1,1 });
+	IpImageMng.GetID("spaceA", "image/spaceA.png", { 400,50 }, { 1,1 });
 }
 
 
@@ -45,20 +46,27 @@ unique_Base SelectScene::Update(unique_Base own)
 	switch (IpSceneMng._stageCnt)
 	{
 	case 1:
-		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],400,300,0,0,100,LAYER::BG });
-		if (IpSceneMng._flameCnt % 50 / 40)
+		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],
+			IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y,0,0,0,LAYER::BG });
+		if (!IpSceneMng._blendCnt)
 		{
-			IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 5 * 4,0,0,0,LAYER::BUTTON });
+			IpSceneMng.AddDrawQue({ IMAGE_ID("èâãâ")[0],
+				IpSceneMng.GameScreenSize.x ,IpSceneMng.GameScreenSize.y + 60,0,0,100,LAYER::BG });
+		}
+		if (IpSceneMng._flameCnt % 100 / 60)
+		{
+			IpSceneMng.AddDrawQue({ IMAGE_ID("spaceA")[0],
+				IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y + 200,0,0,0,LAYER::BUTTON });
 		}
 		
 		break;
 	case 2:
 		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],0,0,0,0,0,LAYER::BG });
-		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceA")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	case 3:
 		IpSceneMng.AddDrawQue({ IMAGE_ID("îwåi")[0],0,0,0,0,0,LAYER::BG });
-		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceblue")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceA")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 2,0,0,0,LAYER::BG });
 		break;
 	default:
 		break;

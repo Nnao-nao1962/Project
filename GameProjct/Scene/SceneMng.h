@@ -88,7 +88,7 @@ public:
 	bool AddActQue(ActQueT aQue);				
 	
 	const Vector2 ScreenSize;					
-	const Vector2 GameScreenSize;				
+	const Vector2 GameScreenSize;		
 	
 	Vector2Dbl MapPos;							
 	Vector2Dbl MapSize;							

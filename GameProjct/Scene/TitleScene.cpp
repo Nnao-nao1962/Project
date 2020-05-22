@@ -28,16 +28,18 @@ TitleScene::~TitleScene()
 // 更新
 unique_Base TitleScene::Update(unique_Base own)
 {
-	if (IpSceneMng._flameCnt % 50 / 40)
+	if (IpSceneMng._flameCnt % 100 / 50)
 	{
-		IpSceneMng.AddDrawQue({ IMAGE_ID("space")[0],IpSceneMng.ScreenSize.x / 2,IpSceneMng.ScreenSize.y / 5*4,0,0,200,LAYER::BUTTON});
+		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceP")[0],
+				IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y + 200,0,0,150,LAYER::BG });
 	}
 	
 
 	// ID、X、Y、ｻｲｽﾞY、回転、Zｵｰﾀﾞｰ、ﾚｲﾔｰID
 	IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],400,300,0,0,0,LAYER::BG});
-	IpSceneMng.AddDrawQue({ IMAGE_ID("白")[0],400,300,0,0,10,LAYER::BG });
-	//IpSceneMng.AddDrawQue({ IMAGE_ID("タイトル")[0],IpSceneMng.ScreenSize.x/2,IpSceneMng.ScreenSize.y / 2-100,0,0,0,LAYER::BG });
+	IpSceneMng.AddDrawQue({ IMAGE_ID("タイトル")[0],
+		IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y - 90,0,0,100,LAYER::BG });
+	
 	if (!IpSceneMng._blendCnt)
 	{
 		if(CheckHitKey(KEY_INPUT_SPACE))
@@ -76,8 +78,9 @@ unique_Base TitleScene::Update(unique_Base own)
 // マップ初期化
 void TitleScene::MapInit(void)
 {
-
-	IpImageMng.GetID("space", "image/space.png", { 300,50 }, { 1,1 });
+	IpImageMng.GetID("背景", "image/back.png", { 800,600 }, { 1,1 });
+	IpImageMng.GetID("タイトル", "image/title.png", { 450,300 }, { 1,1 });
+	IpImageMng.GetID("spaceP", "image/spaceP.png", { 400,50 }, { 1,1 });
 	IpImageMng.GetID("白", "image/white.png", { 800,600 }, { 1,1 });
 	IpImageMng.GetID("ブロック", "image/block.png", { 30,30 }, { 9,2 });
 	

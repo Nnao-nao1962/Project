@@ -14,8 +14,11 @@
 Key _key;
 SceneMng *SceneMng::sInstance=nullptr;
 
-SceneMng::SceneMng() :ScreenSize{ 800,600 }, GameScreenSize{ ScreenSize / 2 }, _flameCnt{ 0 }
+SceneMng::SceneMng() :ScreenSize{ 800,600 }, 
+GameScreenSize{ ScreenSize / 2 }, 
+_flameCnt{ 0 }
 {
+	_blendCnt = 999;
 }
 
 void SceneMng::Draw(void)
