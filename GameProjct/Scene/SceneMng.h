@@ -1,77 +1,29 @@
 #pragma once
-#include <common\Vector2.h>
-#include <vector>
 #include <memory>
-#include "BaseScene.h"
-#include <tuple>						
-#include "LAYER.h"
-#include <map>
-#include <InputState.h>
+#include <vector>
+#include <functional>
+#include <common/Vector2.h>
+#include <Graphic/ImageMng.h>
+#include <Scene/BaseScene.h>
+#include <Scene/TitleScene.h>
+#include <Scene/CharSelectScene.h>
+#include <Scene/GameScene.h>
 
-enum class DRAW_QUE
-{
-	IMAGE,									
-	X,										
-	Y,										
-	SIZE_Y,									
-	RAD,								
-	ZODER,								
-	LAYER,								
-};
-
-enum TRG
-{
-	TRG_NOW,			// 現在				
-	TRG_OLD,			// 1ﾌﾚｰﾑ前
-
-	TRG_MAX
-};
-
-// ｷｰｺﾝﾌｨｸﾞで使用・設定するｷｰ
-struct Key									
-{
-	bool left[TRG_MAX];
-	bool right[TRG_MAX];
-	bool up[TRG_MAX];		
-	bool down[TRG_MAX];	
-	bool Y[TRG_MAX];	// bt1
-	bool B[TRG_MAX];	// bt2
-	bool A[TRG_MAX];	// bt3
-	bool X[TRG_MAX];	// bt4
-};
-
-class Obj;
-
-//ID、X、Y、ｻｲｽﾞY、回転、Zｵｰﾀﾞｰ、ﾚｲﾔｰID
-using DrawQueT = std::tuple<int, double, double,int, double,int, LAYER>;		
-
-// デファイン
-#define IpSceneMng SceneMng::GetInstance()
-#define _mapPos SceneMng::GetInstance().MapPos
-#define _mapSize SceneMng::GetInstance().MapSize
-#define _Input SceneMng::GetInstance()._input
-
-
-#define MAP_X 20
-#define MAP_Y 20
-
+#define SceneMngIns SceneMng::getInstance()
 
 class SceneMng
 {
 public:
-	// 動的シングルトン
-	static SceneMng &GetInstance(void)				
-	{
-		Create();
-		return *sInstance;
-	}
-	static void Create()
+	// Singleton
+	static SceneMng& getInstance()
 	{
 		if (sInstance == nullptr)
 		{
 			sInstance = new SceneMng();
 		}
+		return *sInstance;
 	}
+
 	static void Destroy()
 	{
 		if (sInstance != nullptr)
@@ -80,49 +32,35 @@ public:
 		}
 		sInstance = nullptr;
 	}
-	void Run(void);
 
-	int map[MAP_Y][MAP_X];
+	void Run(void);				// ゲームループ
 
-	bool AddDrawQue(DrawQueT dQue);				
-	bool AddActQue(ActQueT aQue);				
-	
-	const Vector2 ScreenSize;					
-	const Vector2 GameScreenSize;		
-	
-	Vector2Dbl MapPos;							
-	Vector2Dbl MapSize;							
+	int GetPad(void)const;							// 現在のゲームパッドの状態を渡す
+	int GetPadOld(void)const;						// 1フレ前のゲームパッドの状態を渡す
+	Vector2Template<int> GetStick(void)const;		// 現在のアナログスティックの状態を渡す
+	Vector2Template<int> GetStickOld(void)const;	// 1フレ前のアナログスティックの状態を渡す
 
-	int _blendCnt;								
-	int _stageCnt;							
-	int _liveCnt;				// 			
-	int _timeLimitCnt;							
-	int _scoreCnt;						
-	int _flameCnt;
-	
-	std::shared_ptr<InputState> _input;				
-	bool _liveFlag;							// true:生きている、false:死んでいる
-	bool _endFlag;									
-	const int frames(void)const;					
+	void StartVib(int pad, int power, int time)const;	// ゲームパッドを振動させる
+
+	const Vector2Template<int> ScreenSize;			// 画面の大きさ
+	const Vector2Template<int> ScreenCenter;		// 画面の中央
 
 private:
-	static SceneMng* sInstance;						
-	unique_Base _activeScene;						
+	static SceneMng* sInstance;
+	int _padInput;					// 現在のゲームパッドの状態
+	int _padInputOld;				// 1フレ前のゲームパッドの状態
+	Vector2Template<int> _stick;	// 現在のアナログスティックの状態
+	Vector2Template<int> _stickOld;	// 1フレ前のアナログスティックの状態
 
-	void Draw(void);								
-	int _frames;									
-	int _layerGID;									
-	
-	std::map<LAYER, int> _screenID;					
-	std::vector<DrawQueT> _drawList;				
-	std::vector<ActQueT> _actList;					
+	Base_unq _runScene;				// 現在のシーン
 
+	bool SystemInit(void);			// 初期化
+	void UpdatePad(void);			// ゲームパッドの状態の更新
+
+	SceneMng();
 	~SceneMng();
-	SceneMng();													
-	void GetKeyState(void);							
-	bool SysInit(void);								
+
+public:
+	int _charSelFram;
 };
-
-extern Key _key;
-
 

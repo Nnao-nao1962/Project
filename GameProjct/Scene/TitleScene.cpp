@@ -1,137 +1,79 @@
-#include "TitleScene.h"
-#include "SelectScene.h"
-#include "algorithm"
-#include "GameScene.h"
-#include <Dxlib.h>
-#include "ImageMng.h"
-#include "SceneMng.h"
-#include <Stage.h>
-#include <FuncCheck.h>
-#include <map>
+#include <Scene/TitleScene.h>
+#include <algorithm>
+#include <math.h>
+
+
 
 
 TitleScene::TitleScene()
 {
-	IpSceneMng._stageCnt = 1;
-	IpSceneMng._scoreCnt = 0;
-	IpSceneMng._liveCnt = 3;
-
-	MapInit();
-	//funcInit();
-
+	// 初期化
+	_keyAllOld = 1;
+	_theta = 0;
+	_sceneMoveFlag = false;
+	_mesMoveFlag = true;
+	_mesPos_x = -MES_SIZE_X;
 }
+
 
 TitleScene::~TitleScene()
 {
 }
 
-// 更新
-unique_Base TitleScene::Update(unique_Base own)
+Base_unq TitleScene::Update(Base_unq scene)
 {
-	if (IpSceneMng._flameCnt % 100 / 50)
+	// 何か押されたらキャラ選択へ
+	if (!_mesMoveFlag)
 	{
-		IpSceneMng.AddDrawQue({ IMAGE_ID("spaceP")[0],
-				IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y + 200,0,0,150,LAYER::BG });
-	}
-	
-
-	// ID、X、Y、ｻｲｽﾞY、回転、Zｵｰﾀﾞｰ、ﾚｲﾔｰID
-	IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],400,300,0,0,0,LAYER::BG});
-	IpSceneMng.AddDrawQue({ IMAGE_ID("タイトル")[0],
-		IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y - 90,0,0,100,LAYER::BG });
-	
-	if (!IpSceneMng._blendCnt)
-	{
-		if(CheckHitKey(KEY_INPUT_SPACE))
+		if ((CheckHitKeyAll() > 0 && _keyAllOld == 0) || (SceneMngIns.GetPad() != 0 && SceneMngIns.GetPadOld() == 0))
 		{
-			return std::make_unique<SelectScene>();
-			//return std::make_unique<GameScene>();
+			_sceneMoveFlag = true;
+			_mesMoveFlag = true;
 		}
 	}
-
-	auto PlObj = std::find_if(_objList.begin(), _objList.end(), [](sharedObj obj) {return (*obj)._unitID == UNIT_ID::PLAYER; });
-
-	if (!FadeUpdate())
+	else
 	{
-		for (auto data : _objList)
-		{
-			(*data).Update(*PlObj);
-		}
+		scene = mesMove(std::move(scene));
 	}
+	// 現在のキー状態の保存
+	_keyAllOld = CheckHitKeyAll();
 
-	for (auto data : _objList)
-	{
+	Draw();
 
-		(*data).Draw();
-	}
+	// メッセージを上下に動かす用
+	_theta = (_theta + 6) % 360;
 
-	_objList.erase(std::remove_if
-	(
-		_objList.begin(),	
-		_objList.end(),								
-		[](sharedObj& obj) {return (*obj).isDead(); }),
-		_objList.end());
-
-	return std::move(own);
+	return std::move(scene);
 }
 
-// マップ初期化
-void TitleScene::MapInit(void)
+Base_unq TitleScene::mesMove(Base_unq scene)
 {
-	IpImageMng.GetID("背景", "image/back.png", { 800,600 }, { 1,1 });
-	IpImageMng.GetID("タイトル", "image/title.png", { 450,300 }, { 1,1 });
-	IpImageMng.GetID("spaceP", "image/spaceP.png", { 400,50 }, { 1,1 });
-	IpImageMng.GetID("白", "image/white.png", { 800,600 }, { 1,1 });
-	IpImageMng.GetID("ブロック", "image/block.png", { 30,30 }, { 9,2 });
+	_mesPos_x += 100;
 	
-	_mapPos = { 0,0 };
-
-	//_objList.emplace_back(new Player({ 120,495+15 }, { 30,30 }));
-
-	StageState Floordata;
-	for (int y = 0; y < 20; y++)
+	// タイトルに入った時と次に行くときのアニメーション処理
+	if (!_sceneMoveFlag)
 	{
-		for (int x = 0; x < 20; x++)
+		if (_mesPos_x >= SceneMngIns.ScreenCenter.x)
 		{
-			switch (IpSceneMng.map[MAP_Y][MAP_X])
-			{
-			case 4: 
-				Floordata = { BLOCK_TYPE::ブロック１,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(Floordata));
-				break;
-			case 5:
-				Floordata = { BLOCK_TYPE::ブロック２,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(Floordata));
-				break;
-			case 10:
-				Floordata = { BLOCK_TYPE::ブロック３,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(Floordata));
-				break;
-			default:
-				break;
-			}
+			_mesPos_x = SceneMngIns.ScreenCenter.x;
+			_mesMoveFlag = false;
 		}
 	}
-}
-
-
-void TitleScene::RunActQue(std::vector<ActQueT> actList)
-{
-	for (auto actQue : actList)
+	else
 	{
-		try
+		if (_mesPos_x >= SceneMngIns.ScreenSize.x + MES_SIZE_X / 2)
 		{
-			funcQue.at(actQue.first)(actQue, this);
+			return std::make_unique<CharSelectScene>();
 		}
-		catch (...)
-		{
-			//AST();
-		}
-
 	}
+
+	return std::move(scene);
 }
 
-void TitleScene::funcInit(void)
+void TitleScene::Draw(void)
 {
-	funcQue[ACT_QUE::CHECK_LEFT] = FuncCheckLeft();
+	//ImageMngIns.AddDraw({ ImageMngIns.getImage("TitleName")[0], _mesPos_x, SceneMngIns.ScreenCenter.y - 70, 0.0, LAYER::UI, 0 });
+	ImageMngIns.AddDraw({ ImageMngIns.getImage("TitleBack")[0], SceneMngIns.ScreenCenter.x, SceneMngIns.ScreenCenter.y, 0.0, LAYER::BG, -1000 });
+	ImageMngIns.AddDraw({ ImageMngIns.getImage("TitleName")[0], SceneMngIns.ScreenCenter.x, SceneMngIns.ScreenCenter.y, 0.0, LAYER::BG, -1000 });
+	ImageMngIns.AddDraw({ ImageMngIns.getImage("space")[0], SceneMngIns.ScreenCenter.x, SceneMngIns.ScreenCenter.y+200, 0.0, LAYER::BG, -1000 });
 }

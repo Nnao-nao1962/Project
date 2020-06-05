@@ -1,0 +1,2 @@
+C:\Users\kikuchi\Desktop\Projct\Project\GameProjct\x64\Debug\GameProject.exe
+C:\Users\kikuchi\Desktop\Projct\Project\GameProjct\x64\Debug\GameProject.pdb

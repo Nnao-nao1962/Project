@@ -1,198 +1,169 @@
-#include <Dxlib.h>
-#include "_DeBugConOut.h"
-#include "GameScene.h"
-#include "ImageMng.h"
-#include "algorithm"
-#include "Vector2.h"
-#include "SceneMng.h"
-#include "Obj.h"
-#include "FuncCheck.h"
-#include "TitleScene.h"
-#include "Stage.h"
-#include "SelectScene.h"
+#include <Scene/GameScene.h>
+
+std::vector<std::shared_ptr<object>> GameScene::_objList;
 
 GameScene::GameScene()
-{	
-	TRACE("ｹﾞｰﾑｼｰﾝの生成");
-	///funcInit();
-	IpSceneMng._timeLimitCnt = 300;
-	IpSceneMng._liveFlag = true;
-	IpSceneMng._endFlag = false;
-	IpSceneMng._stageCnt =1;	// 3段階の予定
-	
-	
-	// ﾀｲﾄﾙ、ｹﾞｰﾑｵｰﾊﾞｰ画面の登録
+{
+}
 
-	switch (IpSceneMng._stageCnt)
-	{
-	case 1:
-		MapInit();
-		break;
-	case 2:
-		MapInit();
-		break;
-	case 3:
-		MapInit();
-		break;
-	default:
-		AST();
-		break;
-	}
+GameScene::GameScene(int stage)
+{
+	// 初期化
+	_keyOldR = false;
+	StageMngIns.UpdateStagecount(stage);
+	_update = &GameScene::animUpdate;
+	_plMove = &GameScene::moveFall;
+	_count	= 0;
+	_animCount = 0;
 
-	_shakeCount = 0;
+	// アニメーション
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 10));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 10));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 10));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 9));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 8));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 7));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 6));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 5));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::LEFT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::RIGHT, 2));
+	_LRAnim.emplace_back(std::make_pair(OBJ_STATS::MAX, -1));	 // 終了
 }
 
 
 GameScene::~GameScene()
 {
-
 }
 
-unique_Base GameScene::Update(unique_Base own)
+Base_unq GameScene::Update(Base_unq scene)
 {
-	// 描画
-	auto PlObj = std::find_if(_objList.begin(), _objList.end(), [](sharedObj obj) {return (*obj)._unitID == UNIT_ID::PLAYER; });
-
-	if (!FadeUpdate())
+	// 最後まで終わったらステージ選択へ
+	if ((this->*_update)())
 	{
-		for (auto data : _objList)
+		scene = std::make_unique<StageSelectScene>();
+		_objList.clear();
+	}
+
+	return std::move(scene);
+}
+
+void GameScene::setStage(int count)
+{
+	_stageCount = count;
+}
+
+bool GameScene::clearCheck(void)
+{
+	auto pl_data = std::find_if(_objList.begin(), _objList.end(), [](std::shared_ptr<object> data) { return data->getType() == OBJ_TYPE::PLAYER; });
+	if (pl_data == _objList.end())
+	{
+		AST();
+		return false;
+	}
+
+	if (StageMngIns.getStageData({ static_cast<int>((*pl_data)->getPos().x + (*pl_data)->getSize().x / 2), static_cast<int>((*pl_data)->getPos().y + (*pl_data)->getSize().y / 2) }) >= 0 &&
+		StageMngIns.getStageData({ static_cast<int>((*pl_data)->getPos().x + (*pl_data)->getSize().x / 2), static_cast<int>((*pl_data)->getPos().y + (*pl_data)->getSize().y / 2) }) <= 3)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool GameScene::moveFall(void)
+{
+	auto pl_data = std::find_if(_objList.begin(), _objList.end(), [](std::shared_ptr<object> data) { return data->getType() == OBJ_TYPE::PLAYER; });
+
+	(*pl_data)->setPos({ (*pl_data)->getPos().x, (*pl_data)->getPos().y + 20.0 });
+	_count++;
+
+	if (_count >= 40)
+	{
+		_update = &GameScene::objUpdate;
+		ImageMngIns.setEffect(EFFECT::SMOKE, { static_cast<int>((*pl_data)->getPos().x) + CubeSize / 2,static_cast<int>((*pl_data)->getPos().y) + CubeSize / 2 });
+		_startTime = steady_clock::now();
+	}
+	return false;
+}
+
+bool GameScene::moveUp(void)
+{
+	auto pl_data = std::find_if(_objList.begin(), _objList.end(), [](std::shared_ptr<object> data) { return data->getType() == OBJ_TYPE::PLAYER; });
+
+	(*pl_data)->setPos({ (*pl_data)->getPos().x, (*pl_data)->getPos().y - 20.0 });
+	(*pl_data)->setState(static_cast<OBJ_STATS>(_count % 2));
+	_count++;
+
+	if (_count >= 80)
+	{
+
+		return true;
+	}
+	return false;
+}
+
+bool GameScene::moveLR(void)
+{
+	auto pl_data = std::find_if(_objList.begin(), _objList.end(), [](std::shared_ptr<object> data) { return data->getType() == OBJ_TYPE::PLAYER; });
+
+	(*pl_data)->setState(_LRAnim[_animCount].first);
+	_count++;
+	if (_count >= _LRAnim[_animCount].second)
+	{
+		_count = 0;
+		_animCount++;
+		if (_LRAnim[_animCount].first == OBJ_STATS::MAX)
 		{
-			(*data).Update(*PlObj);
+			_plMove = &GameScene::moveUp;
 		}
 	}
 
+	return false;
+}
+
+bool GameScene::objUpdate(void)
+{
 	for (auto data : _objList)
 	{
-
-		(*data).Draw();
+		data->Update();
 	}
 
-	switch (IpSceneMng._stageCnt)
+	if (CheckHitKey(KEY_INPUT_R) && (!_keyOldR) || ((SceneMngIns.GetPad() & PAD_INPUT_10) != 0 && (SceneMngIns.GetPadOld() & PAD_INPUT_10) == 0))
 	{
-	case 1:
-		//TRACE("ｹﾞｰﾑｼｰﾝ1背景の生成");
-		IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],
-			IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y,0,0,0,LAYER::BG });
-		break;
-	case 2:
-		/*IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],
-			IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y,0,0,0,LAYER::BG });*/
-		break;
-	case 3:
-		/*IpSceneMng.AddDrawQue({ IMAGE_ID("背景")[0],
-			IpSceneMng.GameScreenSize.x,IpSceneMng.GameScreenSize.y,0,0,0,LAYER::BG });*/
-		break;
-	default:
-		AST();
-		break;
+		StageMngIns.resetObj();
 	}
-	
-	_objList.erase(std::remove_if(
-		_objList.begin(),									// チェック範囲の開始
-		_objList.end(),										// チェック範囲の終了
-		[](sharedObj& obj) {return (*obj).isDead(); }),		// ラムダ式()
-		_objList.end());
+	_keyOldR = CheckHitKey(KEY_INPUT_R);
 
-
-
-	if (IpSceneMng._endFlag)
+	if (clearCheck())
 	{
-		return std::make_unique<GameScene>();	
+		_update = &GameScene::animUpdate;
+		_plMove = &GameScene::moveLR;
+		_count = 0;
+		_clearTime = steady_clock::now();
+		int time = static_cast<int>(duration_cast<milliseconds>(_clearTime - _startTime).count());
 	}
-	return std::move(own);
+
+	Draw();
+
+	return false;
 }
 
-void GameScene::RunActQue(std::vector<ActQueT> actList)
+bool GameScene::animUpdate(void)
 {
-	for (auto actQue : actList)
-	{
-		try
-		{
-			funcQue.at(actQue.first)(actQue, this);
-		}
-		catch (...)
-		{
-			//AST();
-		}
+	bool tmpBool = (this->*_plMove)();
+	Draw();
 
-	}
+	return tmpBool;
 }
 
-void GameScene::MapInit(void)
+void GameScene::Draw(void)
 {
-	// 描画を読み込む
-	IpImageMng.GetID("ブロック", "image/block.png", { 30,30 }, { 9,2 });	
-	//IpImageMng.GetID("背景", "image/bakeImage.jpg", { 800,600 }, { 1, 1 });
-	//IpImageMng.GetID("白", "image/white.png", { 800,600 }, { 1, 1 });
-
-	
-	_mapPos = { 0,0 };
-
-	
-	// csvﾌｧｲﾙを読み込む
-	int type = NULL;
-	int y = 0;
-	int x = 0;
-	FILE* fp = NULL;
-	fopen_s(&fp, "csv/1.csv", "rb");
-	while (fscanf_s(fp, "%d", &type) != EOF)
+	for (auto data : _objList)
 	{
-		TRACE("ﾏｯﾌﾟﾃﾞｰﾀの読み込み");
-		IpSceneMng.map[MAP_Y][MAP_X] = type;
+		data->objDraw();
 	}
-	
-		
-	StageState stageState;
-	
-	for (int y = 0; y < MAP_Y; y++)
-	{
-		for (int x = 0; x < MAP_X; x++)
-		{
-			switch (IpSceneMng.map[MAP_Y][MAP_X])
-			{
-			case 1:
-				TRACE("ﾌﾞﾛｯｸの読み込み");
-				stageState = { BLOCK_TYPE::ブロック１,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-				break;
-			case 2:
-				//TRACE("ﾌﾞﾛｯｸの読み込み");
-				stageState = { BLOCK_TYPE::ブロック２,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-				break;
-			case 3:
-				//TRACE("ﾌﾞﾛｯｸの読み込み");
-				stageState = { BLOCK_TYPE::ブロック３,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-				break;
-			case 4:
-				//TRACE("ﾌﾞﾛｯｸの読み込み");
-				stageState = { BLOCK_TYPE::ブロック４,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-				break;
-			case 6:
-				//TRACE("ﾌﾞﾛｯｸの読み込み");
-				stageState = { BLOCK_TYPE::ブロックSP,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-				break;
-			default:
-				break;
-			}
-			if (IpSceneMng.map[y][x] == 4)
-			{
-				stageState = { BLOCK_TYPE::ブロック３,{_mapSize.x / 2 - _mapPos.x + _mapSize.x * x,_mapSize.y / 2 - _mapPos.y + _mapSize.y * y + 15},{30,30} };
-				_objList.emplace_back(new Stage(stageState));
-			}
-		}
-	}
+	StageMngIns.Update();
 }
-
-
-
-void GameScene::funcInit(void)
-{
-	funcQue[ACT_QUE::CHECK_LEFT] = FuncCheckLeft();
-	funcQue[ACT_QUE::CHECK_UP] = FuncCheckOn();
-}
-
-
